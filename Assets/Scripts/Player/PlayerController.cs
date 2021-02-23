@@ -1,89 +1,90 @@
 ﻿using UnityEngine;
+using static UnityEngine.Mathf;
+using static UnityEngine.GameObject;
 
 class PlayerController : MonoBehaviour
 {
     #region Script paremeters
-    [Header("Player characteristics")]
-    [SerializeField] float fireRate = 0.25f;
-    [SerializeField] float health = 100.0f;
-    [SerializeField] float laserSpeed = 15.0f;
-    [SerializeField] float movementSpeed = 10.0f;
-#pragma warning disable 649
-    [Header("Object references")]
-    [SerializeField] Camera mainCamera;
-    [SerializeField] GameObject shortLaser, explosionVFX, flashVFX;
-    [SerializeField] JoystickController joystickController;
-    [SerializeField] Transform gunBarrel, barrelVFX;
-    [SerializeField] UIHealthBar uIHealthBar;
-    [SerializeField] InputProperty inputProperty;
-#pragma warning disable 649
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject shortLaser, explosionVFX, flashVFX;
+    [SerializeField] private Transform gunBarrel, barrelVFX;
+    [SerializeField] private float fireRate = 0.25f, health = 100.0f, laserSpeed = 15.0f, movementSpeed = 10.0f;
+    [SerializeField] private string fire = "Fire1", joystickTag = "Joystick", healthBarTag = "HealthBar";
 
-    float maxHealth, playerHeight, playerWidth, shotDelay;
+    private float playerHeight, playerWidth, shotDelay;
+    private GameObject laser;
+    private Rigidbody2D rigidbody2d, rigidbody2dLaser;
+    private Vector2 movement, screenBounds;
+    private JoystickController joystickController;
+    private UIHealthBar uIHealthBar;
 
-    GameObject laser;
-    Rigidbody2D rigidbody2d, rigidbody2dLaser;
-    Vector2 movement, screenBounds;
+    public float MovementSpeed => movementSpeed;
 
-    internal float MovementSpeed { get { return movementSpeed; } }
-    internal float MaxHealth { get { return maxHealth; } }
+    public float MaxHealth { get; private set; }
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
-        maxHealth = health;
+        MaxHealth = health;
 
+        joystickController = FindGameObjectWithTag(joystickTag).GetComponent<JoystickController>();
+        uIHealthBar = FindGameObjectWithTag(healthBarTag).GetComponent<UIHealthBar>();
         rigidbody2d = GetComponent<Rigidbody2D>();
         playerWidth = transform.GetComponent<SpriteRenderer>().bounds.extents.x;
         playerHeight = transform.GetComponent<SpriteRenderer>().bounds.extents.y;
     }
 
-    void Start()
+    private void Start()
     {
-        screenBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height,
-            mainCamera.transform.position.z));
+        screenBounds = mainCamera.ScreenToWorldPoint(new Vector3
+            (
+            Screen.width,
+            Screen.height,
+            mainCamera.transform.position.z
+            ));
 
         uIHealthBar.UpdateHealth(MaxHealth);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Movement();
     }
 
-    void Update()
+    private void Update()
     {
         PlayerInput();
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         Vector2 viewPosition = transform.position;
-        viewPosition.x = Mathf.Clamp(viewPosition.x, screenBounds.x + playerWidth, (screenBounds.x * -1) - playerWidth);
-        viewPosition.y = Mathf.Clamp(viewPosition.y, screenBounds.y + playerHeight, (screenBounds.y * -1) - playerHeight);
+        viewPosition.x = Clamp(viewPosition.x, screenBounds.x + playerWidth, (screenBounds.x * -1) - playerWidth);
+        viewPosition.y = Clamp(viewPosition.y, screenBounds.y + playerHeight, (screenBounds.y * -1) - playerHeight);
         transform.position = viewPosition;
     }
     #endregion
 
     #region Custom methods
-    void PlayerInput()
+    private void PlayerInput()
     {
-        movement.y = joystickController.Vertical(); // Input for Y axis. 
-        movement.x = joystickController.Horizontal(); // Input for X axis.
+        movement.y = joystickController.Vertical();
+        movement.x = joystickController.Horizontal();
 
-        if (inputProperty.Fire && Time.time > shotDelay)
+        if (Input.GetButtonDown(fire) && Time.time > shotDelay)
         {
             shotDelay = Time.time + fireRate;
             Shot();
         }
     }
 
-    void Movement()
+    private void Movement()
     {
         rigidbody2d.MovePosition(rigidbody2d.position + (movement * movementSpeed) * Time.fixedDeltaTime);
     }
 
-    void Shot()
+    private void Shot()
     {
         laser = Instantiate(shortLaser, gunBarrel.position, Quaternion.identity);
         rigidbody2dLaser = laser.GetComponent<Rigidbody2D>();
@@ -91,7 +92,7 @@ class PlayerController : MonoBehaviour
         Instantiate(flashVFX, barrelVFX.position, Quaternion.identity);
     }
 
-    internal void TakeDamage(float takingDamage)
+    public void TakeDamage(float takingDamage)
     {
         health -= takingDamage;
 
@@ -103,7 +104,7 @@ class PlayerController : MonoBehaviour
         uIHealthBar.UpdateHealth(health);
     }
 
-    internal void TakePowerUp(float takingHealth)
+    public void TakePowerUp(float takingHealth)
     {
         health += takingHealth;
 
@@ -120,15 +121,6 @@ class PlayerController : MonoBehaviour
             shotDelay = Time.time + fireRate;
             Shot();
         }
-    }
-    #endregion
-
-    #region Nested classes
-    [System.Serializable]
-    class InputProperty
-    {
-        [SerializeField] string fire = "Fire1";
-        internal bool Fire { get { return Input.GetButtonDown(fire); } }
     }
     #endregion
 }

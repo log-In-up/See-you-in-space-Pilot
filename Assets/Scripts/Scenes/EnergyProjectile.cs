@@ -3,45 +3,42 @@
 class EnergyProjectile : MonoBehaviour
 {
     #region Script paremeters
-    [Header("Projectile characteristics")]
-    [SerializeField] float damage = 20.0f;
-#pragma warning disable 649
-    [Header("Object references")]
-    [SerializeField] Camera mainCamera;
-    [SerializeField] GameObject destructionVFX;
-    [SerializeField] Tags tags;
-#pragma warning disable 649
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject destructionVFX;
+    [SerializeField] private float damage = 20.0f;
+    [SerializeField] private string enemyProjectile = "EnemyProjectile", enemyTag = "Enemy", playerProjectile = "PlayerProjectile", playerTag = "Player";
 
-    Vector2 screenBounds;
+    private Vector2 screenBounds;
     #endregion
 
     #region MonoBehaviour API
-    void Start()
+    private void Start()
     {
         screenBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height,
             mainCamera.transform.position.z));
     }
 
-    void Update()
+    private void Update()
     {
         Clean();
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag(tags.playerTag) && !transform.CompareTag(tags.playerProjectile))
+        PlayerController player;
+        EnemyAI enemy;
+
+        if (collision.CompareTag(playerTag) && !transform.CompareTag(playerProjectile))
         {
-            PlayerController player = collision.GetComponent<PlayerController>();
+            player = collision.GetComponent<PlayerController>();
             player.TakeDamage(damage);
-
-            OnHit();
+            InstanitateVFX();
         }
-        else if (collision.CompareTag(tags.enemyTag) && !transform.CompareTag(tags.enemyProjectile))
+        else if (collision.CompareTag(enemyTag) && !transform.CompareTag(enemyProjectile))
         {
-            EnemyAI enemy = collision.GetComponent<EnemyAI>();
+            enemy = collision.GetComponent<EnemyAI>();
             enemy.TakeDamage(damage);
-
-            OnHit();
+            InstanitateVFX();
         }
         else
             return;
@@ -49,27 +46,16 @@ class EnergyProjectile : MonoBehaviour
     #endregion
 
     #region Custom methods
-    void Clean()
+    private void Clean()
     {
         if (transform.position.y >= screenBounds.y + 20.0f || transform.position.y <= screenBounds.y - 20.0f)
             Destroy(gameObject);
     }
 
-    void OnHit()
+    private void InstanitateVFX()
     {
         Instantiate(destructionVFX, transform.position, Quaternion.identity);
         Destroy(gameObject);
-    }
-    #endregion
-
-    #region Nested classes
-    [System.Serializable]
-    class Tags
-    {
-        [SerializeField] internal string enemyProjectile = "EnemyProjectile";
-        [SerializeField] internal string enemyTag = "Enemy";
-        [SerializeField] internal string playerProjectile = "PlayerProjectile";
-        [SerializeField] internal string playerTag = "Player";
     }
     #endregion
 }

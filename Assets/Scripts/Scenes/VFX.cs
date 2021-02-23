@@ -1,23 +1,23 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-class VFX : MonoBehaviour
+public class VFX : MonoBehaviour
 {
     #region Script paremeters
-    [SerializeField] float lifeTime = 0.3f;
+    [SerializeField] private float destructionTime;
     #endregion
 
     #region MonoBehaviour API
-    void OnEnable()
+    private void OnEnable()
     {
         StartCoroutine(Destruction());
     }
     #endregion
 
     #region Custom methods
-    IEnumerator Destruction()
+    private IEnumerator Destruction()
     {
-        yield return new WaitForSeconds(lifeTime);
+        yield return new WaitForSeconds(destructionTime);
         Destroy(gameObject);
     }
     #endregion

@@ -210,22 +210,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 516a594473524594990e8f569f5dffc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0.25
-  health: 100
-  laserSpeed: 15
-  movementSpeed: 10
   mainCamera: {fileID: 0}
   shortLaser: {fileID: 7704888556986655040, guid: ac81cf8d8b62bcf498716e830946782b,
     type: 3}
   explosionVFX: {fileID: 1587261729604890, guid: e6e9726bb06cda642bfc6e9d498ed7bf,
     type: 3}
   flashVFX: {fileID: 1495817439842732, guid: a11a2c2dae5c32f4aa40b9a931fc541a, type: 3}
-  joystickController: {fileID: 0}
   gunBarrel: {fileID: 3685259236821287359}
   barrelVFX: {fileID: 5854337637635287321}
-  uIHealthBar: {fileID: 0}
-  inputProperty:
-    fire: Fire1
+  fireRate: 0.25
+  health: 100
+  laserSpeed: 15
+  movementSpeed: 10
+  fire: Fire1
+  joystickTag: Joystick
+  healthBarTag: HealthBar
 --- !u!1 &5734917025034003467
 GameObject:
   m_ObjectHideFlags: 0

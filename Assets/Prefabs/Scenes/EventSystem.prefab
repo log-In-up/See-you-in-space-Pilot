@@ -85,8 +85,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 0}
   pauseButton: {fileID: 0}
-  score: {fileID: 0}
-  wave: {fileID: 0}
+  scoreUI: {fileID: 0}
+  waveUI: {fileID: 0}
   spawnPoints:
   - {fileID: 7798408977942870692}
   - {fileID: 2419467644316591820}
@@ -100,8 +100,11 @@ MonoBehaviour:
       type: 3}
     spawnRate: 3
     numberOfEnemies: 2
-  timeBetweenWaves: 5
   scoreValue: 5
+  timeBetweenWaves: 5
+  enemyTag: Enemy
+  mainGameScene: MainGameScene
+  mainMenu: MainMenu
 --- !u!114 &1952307895
 MonoBehaviour:
   m_ObjectHideFlags: 0

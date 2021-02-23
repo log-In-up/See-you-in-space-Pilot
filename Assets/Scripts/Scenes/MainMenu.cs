@@ -5,48 +5,42 @@ using UnityEngine;
 class MainMenu : MonoBehaviour
 {
     #region Script paremeters
-#pragma warning disable 649
-    [SerializeField] AudioMixer audioMixer;
-    [SerializeField] GameObject mainInterface;
-    [SerializeField] GameObject settingsMenu;
-    [SerializeField] AudioProperty audioProrerty;
-    [SerializeField] Scenes scenes;
-#pragma warning restore 649
-
-
+    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private GameObject mainInterface, settingsMenu;
+    [SerializeField] private string gameSound = "GameSound", mainGameScene = "MainGameScene", musicSound = "MusicSound", sfx = "SFX";
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
         Time.timeScale = 1.0f;
     }
     #endregion
 
     #region Custom methods
-    public void LoadMainGameScene() => SceneManager.LoadScene(scenes.mainGameScene);
-
-    public void SetGameSound(float volume) => audioMixer.SetFloat(audioProrerty.gameSound, volume);
-
-    public void SetMusicSound(float volume) => audioMixer.SetFloat(audioProrerty.musicSound, volume);
-
-    public void SetSFXSound(float volume) => audioMixer.SetFloat(audioProrerty.sfx, volume);
-
-    public void SetGraphicsQuality(int quality) => QualitySettings.SetQualityLevel(quality);
-    #endregion
-
-    #region Nested classes
-    [System.Serializable]
-    class AudioProperty
+    public void LoadMainGameScene()
     {
-        [SerializeField] internal string gameSound = "GameSound";
-        [SerializeField] internal string musicSound = "MusicSound";
-        [SerializeField] internal string sfx = "SFX";
+        SceneManager.LoadScene(mainGameScene);
     }
-    [System.Serializable]
-    class Scenes
+
+    public void SetGameSound(float volume)
     {
-        [SerializeField] internal string mainGameScene = "MainGameScene";
+        audioMixer.SetFloat(gameSound, volume);
+    }
+
+    public void SetMusicSound(float volume)
+    {
+        audioMixer.SetFloat(musicSound, volume);
+    }
+
+    public void SetSFXSound(float volume)
+    {
+        audioMixer.SetFloat(sfx, volume);
+    }
+
+    public void SetGraphicsQuality(int quality)
+    {
+        QualitySettings.SetQualityLevel(quality);
     }
     #endregion
 }

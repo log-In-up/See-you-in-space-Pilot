@@ -1,21 +1,31 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine;
+using static UnityEngine.RectTransformUtility;
 
 class JoystickController : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     #region Script paremeters
-#pragma warning disable 649
-    [SerializeField] InputProrerty inputProrerty;
-#pragma warning restore 649
+    [SerializeField] private string horizontalAxis = "Horizontal", verticalAxis = "Vertical";
 
-    Image joystick, joystickController;
-    Vector2 joystickBias;
+    private const byte two = 2;
+    private Image joystick, joystickController;
+    private Vector2 joystickBias, position;
+    private JoystickController instance = null;
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance == this)
+        {
+            Destroy(gameObject);
+        }
+
         joystick = GetComponent<Image>();
         joystickController = transform.GetChild(0).GetComponent<Image>();
     }
@@ -24,20 +34,17 @@ class JoystickController : MonoBehaviour, IDragHandler, IPointerDownHandler, IPo
     #region Custom methods
     public virtual void OnDrag(PointerEventData pointerEventData)
     {
-#pragma warning disable 642
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(joystick.rectTransform,
-            pointerEventData.position, pointerEventData.pressEventCamera, out Vector2 position));
-#pragma warning restore 642
+        if (ScreenPointToLocalPointInRectangle(joystick.rectTransform, pointerEventData.position, pointerEventData.pressEventCamera, out position))
         {
             position.x /= joystick.rectTransform.sizeDelta.x;
             position.y /= joystick.rectTransform.sizeDelta.y;
 
-            joystickBias = new Vector2(position.x * 2, position.y * 2);
+            joystickBias = new Vector2(position.x * two, position.y * two);
             joystickBias = (joystickBias.magnitude > 1.0f) ? joystickBias.normalized : joystickBias;
 
             joystickController.rectTransform.anchoredPosition = new Vector2(
-                joystickBias.x * (joystick.rectTransform.sizeDelta.x / 2),
-                joystickBias.y * (joystick.rectTransform.sizeDelta.y / 2));
+                joystickBias.x * (joystick.rectTransform.sizeDelta.x / two),
+                joystickBias.y * (joystick.rectTransform.sizeDelta.y / two));
         }
     }
 
@@ -52,28 +59,16 @@ class JoystickController : MonoBehaviour, IDragHandler, IPointerDownHandler, IPo
         joystickController.rectTransform.anchoredPosition = Vector2.zero;
     }
 
-    internal float Horizontal()
+    public float Horizontal()
     {
         if (joystickBias.x != 0) return joystickBias.x;
-        else return inputProrerty.Horizontal;
+        else return Input.GetAxisRaw(horizontalAxis);
     }
 
-    internal float Vertical()
+    public float Vertical()
     {
         if (joystickBias.y != 0) return joystickBias.y;
-        else return inputProrerty.Vertical;
-    }
-    #endregion
-
-    #region Nested classes
-    [System.Serializable]
-    class InputProrerty
-    {
-        [SerializeField] string horizontal = "Horizontal";
-        [SerializeField] string vertical = "Vertical";
-
-        internal float Horizontal { get { return Input.GetAxisRaw(horizontal); } }
-        internal float Vertical { get { return Input.GetAxisRaw(vertical); } }
+        else return Input.GetAxisRaw(verticalAxis);
     }
     #endregion
 }

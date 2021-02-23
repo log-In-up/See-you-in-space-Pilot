@@ -4,36 +4,32 @@ using UnityEngine;
 class UIHealthBar : MonoBehaviour
 {
     #region Script paremeters
-#pragma warning disable 649
-    [Header("Object references")]
-    [SerializeField] GameObject player;
-    [SerializeField] RectTransform healthBar;
-    [SerializeField] Text value;
-#pragma warning restore 649
+    [SerializeField] private GameObject player;
+    [SerializeField] private RectTransform healthBar;
+    [SerializeField] private Text value;
 
-    PlayerController playerController;
-
-    float calculatedWidth, widthMultiplier;
+    private PlayerController playerController;
+    private float calculatedWidth, widthMultiplier;
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
         playerController = player.GetComponent<PlayerController>();
     }
 
-    void Start()
+    private void Start()
     {
         widthMultiplier = healthBar.sizeDelta.x / playerController.MaxHealth;
     }
     #endregion
 
     #region Custom methods
-    internal void UpdateHealth(float health)
+    public void UpdateHealth(float health)
     {
         calculatedWidth = health * widthMultiplier;
         healthBar.sizeDelta = new Vector2(calculatedWidth, healthBar.sizeDelta.y);
-        value.text = string.Format("{0} / {1}", health.ToString(), playerController.MaxHealth.ToString());
+        value.text = $"{health} / {playerController.MaxHealth}";
     }
     #endregion
 }

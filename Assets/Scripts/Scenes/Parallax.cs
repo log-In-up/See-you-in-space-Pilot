@@ -1,33 +1,33 @@
 ﻿using UnityEngine;
+using static UnityEngine.Mathf;
 
 class Parallax : MonoBehaviour
 {
     #region Script paremeters
-#pragma warning disable 649
-    [SerializeField] PlayerController playerMovement;
-#pragma warning restore 649
+    [SerializeField] private string playerTag = "Player";
 
-    float length;
-
-    Transform lastChildObject = null;
-    Vector2 parallaxVector;
+    private PlayerController playerController;
+    private Transform lastChildObject = null;
+    private Vector2 parallaxVector;
+    private float length;
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
+        playerController = GameObject.FindGameObjectWithTag(playerTag).GetComponent<PlayerController>();
         parallaxVector = transform.position;
         lastChildObject = transform.GetChild(transform.childCount - 1);
     }
 
-    void Start()
+    private void Start()
     {
         length = transform.position.y - lastChildObject.transform.position.y;
     }
 
-    void Update()
+    private void Update()
     {
-        float position = Mathf.Repeat(Time.time * playerMovement.MovementSpeed, length);
+        float position = Repeat(Time.time * playerController.MovementSpeed, length);
         transform.position = parallaxVector + Vector2.down * position;
     }
     #endregion

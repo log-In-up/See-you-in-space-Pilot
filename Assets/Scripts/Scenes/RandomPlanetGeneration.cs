@@ -1,31 +1,29 @@
 ﻿using System.Collections;
 using UnityEngine;
+using static UnityEngine.Random;
 
 class RandomPlanetGeneration : MonoBehaviour
 {
     #region Script paremeters
-#pragma warning disable 649
-    [SerializeField] GameObject[] planets;
-#pragma warning restore 649
-    [SerializeField] bool createPlanets = true;
-    [SerializeField] float createTime = 3.0f;
-    [SerializeField] float distanceToScreenBoundaries = 10.0f;
-    [SerializeField] float planetSpeedMultiplier = 1.15f;
-    [SerializeField] string playerTag = "Player";
+    [SerializeField] private GameObject[] planets;
+    [SerializeField] private bool createPlanets = true;
+    [SerializeField] private float createTime = 3.0f, planetSpeedMultiplier = 1.15f;
+    [SerializeField] private string playerTag = "Player";
 
-    Camera mainCamera;
-    PlayerController playerMovement;
-    Vector2 screenBounds;
+    private const byte zero = 0, ten = 10;
+    private Camera mainCamera;
+    private Vector2 screenBounds;
+    private PlayerController playerMovement;
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
-        playerMovement = GameObject.FindGameObjectWithTag(playerTag).GetComponent<PlayerController>();       
+        playerMovement = GameObject.FindGameObjectWithTag(playerTag).GetComponent<PlayerController>();
         mainCamera = GetComponent<Camera>();
     }
 
-    void Start()
+    private void Start()
     {
         screenBounds = mainCamera.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
         StartCoroutine(CreatePlanet());
@@ -33,7 +31,7 @@ class RandomPlanetGeneration : MonoBehaviour
     #endregion
 
     #region Custom methods
-    IEnumerator CreatePlanet()
+    private IEnumerator CreatePlanet()
     {
         while (createPlanets)
         {
@@ -42,18 +40,17 @@ class RandomPlanetGeneration : MonoBehaviour
         }
     }
 
-    void Planet()
+    private void Planet()
     {
-        Vector2 movementPlanet = new Vector2(Random.Range(-screenBounds.x - distanceToScreenBoundaries,
-            screenBounds.x + distanceToScreenBoundaries), screenBounds.y + distanceToScreenBoundaries);
-
-        int randomNumber = Random.Range(0, planets.Length);
+        Vector2 movementPlanet = new Vector2(Range(-screenBounds.x - ten, screenBounds.x + ten),
+            screenBounds.y + ten);
+        int randomNumber = Range(zero, planets.Length);
 
         GameObject planet = Instantiate(planets[randomNumber], movementPlanet, Quaternion.identity);
 
-        Rigidbody2D rigBodyPlanet = planet.GetComponent<Rigidbody2D>();
+        Rigidbody2D rigbodyPlanet = planet.GetComponent<Rigidbody2D>();
         float speed = playerMovement.MovementSpeed * planetSpeedMultiplier;
-        rigBodyPlanet.AddForce(Vector2.down * speed, ForceMode2D.Impulse);
+        rigbodyPlanet.AddForce(Vector2.down * speed, ForceMode2D.Impulse);
     }
     #endregion
 }

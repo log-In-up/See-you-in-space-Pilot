@@ -3,31 +3,29 @@
 class PowerUp : MonoBehaviour
 {
     #region Script paremeters
-    [Header("PowerUp characteristics")]
-    [SerializeField] float healthRecovery = 20.0f;
-    [SerializeField] float powerUpSpeed = 5.0f;
-    [SerializeField] float scoreValue = 5.0f;
-    [SerializeField] string playerTag = "Player";
+    [SerializeField] private float healthRecovery = 20.0f, powerUpSpeed = 5.0f, scoreValue = 5.0f;
+    [SerializeField] private string playerTag = "Player";
 
-    GameMaster gameMaster;
-    Rigidbody2D rigidbody2d;
-    Transform powerUp;
+    private GameMaster gameMaster;
+    private Rigidbody2D rigidbody2d;
+    private Transform powerUp;
+
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
         gameMaster = FindObjectOfType<GameMaster>();
         powerUp = GetComponent<Transform>();
         rigidbody2d = GetComponent<Rigidbody2D>();
     }
 
-    void Start()
+    private void Start()
     {
         PowerUpSpeed();
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag(playerTag))
         {
@@ -38,16 +36,16 @@ class PowerUp : MonoBehaviour
     #endregion
 
     #region Custom methods
-    void PickUp(Collider2D player)
+    private void PickUp(Collider2D player)
     {
         PlayerController playerController = player.GetComponent<PlayerController>();
         playerController.TakePowerUp(healthRecovery);
         Destroy(gameObject);
     }
 
-    void PowerUpSpeed()
+    private void PowerUpSpeed()
     {
-        rigidbody2d.AddForce(powerUp.up * (-powerUpSpeed), ForceMode2D.Impulse);
+        rigidbody2d.AddForce(-powerUp.up * powerUpSpeed, ForceMode2D.Impulse);
     }
     #endregion
 }

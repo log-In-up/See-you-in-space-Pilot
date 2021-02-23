@@ -6,29 +6,24 @@ using UnityEngine;
 class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     #region Script paremeters
-    [Header("HoldButton characteristics")]
-    [SerializeField] Color pressedColor = Color.gray;
-#pragma warning disable 649
-    [SerializeField] UnityEvent onHold;
-#pragma warning restore 649
+    [SerializeField] private Color pressedColor = Color.gray;
+    [SerializeField] private UnityEvent onHold;
 
-    Color standardColor;
-    Image image;
-    bool buttonDown;
+    private Color standardColor;
+    private Image image;
+    private bool buttonDown;
     #endregion
 
     #region MonoBehaviour API
-    void Awake()
+    private void Awake()
     {
         image = GetComponent<Image>();        
     }
-
-    void Start()
+    private void Start()
     {
         standardColor = image.color;
     }
-
-    void Update()
+    private void Update()
     {
         if (buttonDown && onHold != null)
             onHold.Invoke();
